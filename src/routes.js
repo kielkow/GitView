@@ -10,6 +10,10 @@ export default function Routes() {
       <Switch>
         <Route path="/" exact component={Main} />
         <Route path="/repository/:repository" component={Repository} />
+        <Route
+          path="/repos/:repository/issues?state=:state"
+          component={Repository}
+        />
       </Switch>
     </BrowserRouter>
   );
