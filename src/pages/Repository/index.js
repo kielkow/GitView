@@ -19,11 +19,13 @@ export default class Repository extends Component {
     repository: {},
     issues: [],
     loading: true,
-    per_page: 5,
+    page: 1,
   };
 
   async componentDidMount() {
     const { match } = this.props;
+
+    const { page } = this.state;
 
     const repoName = decodeURIComponent(match.params.repository);
 
@@ -31,13 +33,11 @@ export default class Repository extends Component {
       api.get(`/repos/${repoName}`),
       api.get(`/repos/${repoName}/issues`, {
         params: {
+          page,
           state: 'open',
-          per_page: this.state.per_page,
         },
       }),
     ]);
-
-    console.log(issues);
 
     this.setState({
       repository: repository.data,
@@ -50,6 +50,7 @@ export default class Repository extends Component {
     e.preventDefault();
 
     const { match } = this.props;
+    const { page } = this.state;
 
     const repoName = decodeURIComponent(match.params.repository);
 
@@ -57,13 +58,11 @@ export default class Repository extends Component {
       api.get(`/repos/${repoName}`),
       api.get(`/repos/${repoName}/issues`, {
         params: {
+          page,
           state: 'all',
-          per_page: this.state.per_page,
         },
       }),
     ]);
-
-    console.log(issues);
 
     this.setState({
       repository: repository.data,
@@ -76,6 +75,7 @@ export default class Repository extends Component {
     e.preventDefault();
 
     const { match } = this.props;
+    const { page } = this.state;
 
     const repoName = decodeURIComponent(match.params.repository);
 
@@ -83,13 +83,11 @@ export default class Repository extends Component {
       api.get(`/repos/${repoName}`),
       api.get(`/repos/${repoName}/issues`, {
         params: {
+          page,
           state: 'open',
-          per_page: this.state.per_page,
         },
       }),
     ]);
-
-    console.log(issues);
 
     this.setState({
       repository: repository.data,
@@ -102,6 +100,7 @@ export default class Repository extends Component {
     e.preventDefault();
 
     const { match } = this.props;
+    const { page } = this.state;
 
     const repoName = decodeURIComponent(match.params.repository);
 
@@ -109,13 +108,11 @@ export default class Repository extends Component {
       api.get(`/repos/${repoName}`),
       api.get(`/repos/${repoName}/issues`, {
         params: {
+          page,
           state: 'closed',
-          per_page: this.state.per_page,
         },
       }),
     ]);
-
-    console.log(issues);
 
     this.setState({
       repository: repository.data,
@@ -124,20 +121,24 @@ export default class Repository extends Component {
     });
   };
 
-  next = e => {
+  next = async e => {
     e.preventDefault();
-    this.setState({
-      per_page: this.state.per_page + 5,
+    const { page } = this.state;
+    await this.setState({
+      page: page + 1,
     });
-    console.log(this.state.per_page);
+    console.log(this.state.page);
   };
 
-  previous = e => {
+  previous = async e => {
     e.preventDefault();
-    this.setState({
-      per_page: this.state.per_page - 5,
-    });
-    console.log(this.state.per_page);
+    const { page } = this.state;
+    if (page !== 1) {
+      await this.setState({
+        page: page - 1,
+      });
+    }
+    console.log(this.state.page);
   };
 
   render() {
