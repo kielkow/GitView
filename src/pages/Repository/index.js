@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Loading, Owner, IssuesList } from './styles';
+import { Loading, Owner, IssuesList, Filter, Page } from './styles';
 
 export default class Repository extends Component {
   static propTypes = {
@@ -19,6 +19,7 @@ export default class Repository extends Component {
     repository: {},
     issues: [],
     loading: true,
+    per_page: 5,
   };
 
   async componentDidMount() {
@@ -37,7 +38,6 @@ export default class Repository extends Component {
       },
     ]);
 
-    console.log(repository);
     console.log(issues);
 
     this.setState({
@@ -46,6 +46,69 @@ export default class Repository extends Component {
       loading: false,
     });
   }
+
+  filterAll = async e => {
+    e.preventDefault();
+
+    const { match } = this.props;
+
+    const repoName = decodeURIComponent(match.params.repository);
+
+    const [repository, issues] = await Promise.all([
+      api.get(`/repos/${repoName}`),
+      api.get(`/repos/${repoName}/issues?state=all`),
+    ]);
+
+    console.log(issues);
+
+    this.setState({
+      repository: repository.data,
+      issues: issues.data,
+      loading: false,
+    });
+  };
+
+  filterOpen = async e => {
+    e.preventDefault();
+
+    const { match } = this.props;
+
+    const repoName = decodeURIComponent(match.params.repository);
+
+    const [repository, issues] = await Promise.all([
+      api.get(`/repos/${repoName}`),
+      api.get(`/repos/${repoName}/issues?state=open`),
+    ]);
+
+    console.log(issues);
+
+    this.setState({
+      repository: repository.data,
+      issues: issues.data,
+      loading: false,
+    });
+  };
+
+  filterClosed = async e => {
+    e.preventDefault();
+
+    const { match } = this.props;
+
+    const repoName = decodeURIComponent(match.params.repository);
+
+    const [repository, issues] = await Promise.all([
+      api.get(`/repos/${repoName}`),
+      api.get(`/repos/${repoName}/issues?state=closed`),
+    ]);
+
+    console.log(issues);
+
+    this.setState({
+      repository: repository.data,
+      issues: issues.data,
+      loading: false,
+    });
+  };
 
   render() {
     const { repository, issues, loading } = this.state;
@@ -63,6 +126,10 @@ export default class Repository extends Component {
           <p>{repository.description}</p>
         </Owner>
 
+        <Filter onClick={this.filterAll}>All</Filter>
+        <Filter onClick={this.filterOpen}>Open</Filter>
+        <Filter onClick={this.filterClosed}>Closed</Filter>
+
         <IssuesList>
           {issues.map(issue => (
             <li key={String(issue.id)}>
@@ -78,6 +145,7 @@ export default class Repository extends Component {
               </div>
             </li>
           ))}
+          <Page>Next</Page>
         </IssuesList>
       </Container>
     );

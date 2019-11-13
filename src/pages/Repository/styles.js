@@ -41,6 +41,19 @@ export const Owner = styled.header`
     max-width: 400px;
   }
 `;
+
+export const Filter = styled.button`
+  background: #7159c1;
+  color: #eee;
+  border: 0;
+  border-radius: 3px;
+  padding: 5px;
+  font-size: 17px;
+  & + button {
+    margin-left: 10px;
+  }
+`;
+
 export const IssuesList = styled.ul`
   padding-top: 30px;
   margin-top: 30px;
@@ -99,4 +112,17 @@ export const IssuesList = styled.ul`
       }
     }
   }
+`;
+
+export const Page = styled.button`
+  background: #7159c1;
+  color: #eee;
+  font-style: bold;
+  margin-top: 5px;
+  font-size: 15px;
+  float: center;
+  display: flex;
+  padding: 10px 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
 `;
