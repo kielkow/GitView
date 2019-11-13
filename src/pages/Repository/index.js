@@ -29,20 +29,19 @@ export default class Repository extends Component {
 
     const [repository, issues] = await Promise.all([
       api.get(`/repos/${repoName}`),
-      api.get(`/repos/${repoName}/issues`),
-      {
+      api.get(`/repos/${repoName}/issues`, {
         params: {
-          state: 'closed',
-          per_page: 5,
+          state: 'open',
+          per_page: this.state.per_page,
         },
-      },
+      }),
     ]);
 
     console.log(issues);
 
     this.setState({
       repository: repository.data,
-      issues: issues.data.slice(0, 5),
+      issues: issues.data,
       loading: false,
     });
   }
@@ -56,7 +55,12 @@ export default class Repository extends Component {
 
     const [repository, issues] = await Promise.all([
       api.get(`/repos/${repoName}`),
-      api.get(`/repos/${repoName}/issues?state=all`),
+      api.get(`/repos/${repoName}/issues`, {
+        params: {
+          state: 'all',
+          per_page: this.state.per_page,
+        },
+      }),
     ]);
 
     console.log(issues);
@@ -77,7 +81,12 @@ export default class Repository extends Component {
 
     const [repository, issues] = await Promise.all([
       api.get(`/repos/${repoName}`),
-      api.get(`/repos/${repoName}/issues?state=open`),
+      api.get(`/repos/${repoName}/issues`, {
+        params: {
+          state: 'open',
+          per_page: this.state.per_page,
+        },
+      }),
     ]);
 
     console.log(issues);
@@ -98,7 +107,12 @@ export default class Repository extends Component {
 
     const [repository, issues] = await Promise.all([
       api.get(`/repos/${repoName}`),
-      api.get(`/repos/${repoName}/issues?state=closed`),
+      api.get(`/repos/${repoName}/issues`, {
+        params: {
+          state: 'closed',
+          per_page: this.state.per_page,
+        },
+      }),
     ]);
 
     console.log(issues);
@@ -112,20 +126,18 @@ export default class Repository extends Component {
 
   next = e => {
     e.preventDefault();
-    const { per_page } = this.state;
-    per_page = 10;
     this.setState({
-      per_page,
+      per_page: this.state.per_page + 5,
     });
+    console.log(this.state.per_page);
   };
 
   previous = e => {
     e.preventDefault();
-    const { per_page } = this.state;
-    per_page = 10;
     this.setState({
-      per_page,
+      per_page: this.state.per_page - 5,
     });
+    console.log(this.state.per_page);
   };
 
   render() {
