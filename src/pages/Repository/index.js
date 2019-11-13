@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Loading, Owner, IssuesList, Filter, Page } from './styles';
+import { Loading, Owner, IssuesList, Filter, Pagination } from './styles';
 
 export default class Repository extends Component {
   static propTypes = {
@@ -32,7 +32,7 @@ export default class Repository extends Component {
       api.get(`/repos/${repoName}/issues`),
       {
         params: {
-          state: 'open',
+          state: 'closed',
           per_page: 5,
         },
       },
@@ -42,7 +42,7 @@ export default class Repository extends Component {
 
     this.setState({
       repository: repository.data,
-      issues: issues.data,
+      issues: issues.data.slice(0, 5),
       loading: false,
     });
   }
@@ -110,6 +110,24 @@ export default class Repository extends Component {
     });
   };
 
+  next = e => {
+    e.preventDefault();
+    const { per_page } = this.state;
+    per_page = 10;
+    this.setState({
+      per_page,
+    });
+  };
+
+  previous = e => {
+    e.preventDefault();
+    const { per_page } = this.state;
+    per_page = 10;
+    this.setState({
+      per_page,
+    });
+  };
+
   render() {
     const { repository, issues, loading } = this.state;
 
@@ -145,7 +163,10 @@ export default class Repository extends Component {
               </div>
             </li>
           ))}
-          <Page>Next</Page>
+          <Pagination>
+            <button onClick={this.previous}>Previous</button>
+            <button onClick={this.next}>Next</button>
+          </Pagination>
         </IssuesList>
       </Container>
     );

@@ -47,8 +47,9 @@ export const Filter = styled.button`
   color: #eee;
   border: 0;
   border-radius: 3px;
-  padding: 5px;
+  padding: 7px;
   font-size: 17px;
+  font-style: bold;
   & + button {
     margin-left: 10px;
   }
@@ -114,15 +115,23 @@ export const IssuesList = styled.ul`
   }
 `;
 
-export const Page = styled.button`
-  background: #7159c1;
-  color: #eee;
-  font-style: bold;
-  margin-top: 5px;
-  font-size: 15px;
-  float: center;
+export const Pagination = styled.div`
+  margin-top: 15px;
   display: flex;
-  padding: 10px 15px;
-  border: 1px solid #eee;
-  border-radius: 4px;
+  align-items: center;
+
+  button {
+    background: #7159c1;
+    color: #eee;
+    font-style: bold;
+    & + button {
+      margin-left: 10px;
+    }
+    font-size: 17px;
+    float: center;
+    display: flex;
+    padding: 10px 15px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+  }
 `;
