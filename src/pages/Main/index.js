@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Form, SubmitButton, List, Input } from './styles';
+import { Form, SubmitButton, List, Input, Clear } from './styles';
 
 export default class Main extends Component {
   state = {
@@ -73,6 +73,10 @@ export default class Main extends Component {
     }
   };
 
+  cleanLocalStorage() {
+    localStorage.clear();
+  }
+
   render() {
     const { newRepo, repositories, loading, error } = this.state;
 
@@ -110,6 +114,7 @@ export default class Main extends Component {
               </Link>
             </li>
           ))}
+          <Clear onClick={this.cleanLocalStorage}>Clear</Clear>
         </List>
       </Container>
     );

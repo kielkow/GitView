@@ -20,6 +20,7 @@ export default class Repository extends Component {
     issues: [],
     loading: true,
     page: 1,
+    state: 'open',
   };
 
   async componentDidMount() {
@@ -31,12 +32,13 @@ export default class Repository extends Component {
 
     const [repository, issues] = await Promise.all([
       api.get(`/repos/${repoName}`),
-      api.get(`/repos/${repoName}/issues`, {
+      api.get(`/repos/${repoName}/issues`),
+      {
         params: {
           page,
           state: 'open',
         },
-      }),
+      },
     ]);
 
     this.setState({
@@ -44,6 +46,14 @@ export default class Repository extends Component {
       issues: issues.data,
       loading: false,
     });
+  }
+
+  componentDidUpdate(_, prevState) {
+    const { issues } = this.state;
+
+    if (prevState.issues !== issues) {
+      localStorage.setItem('issues', JSON.stringify(issues));
+    }
   }
 
   filterAll = async e => {
@@ -68,6 +78,8 @@ export default class Repository extends Component {
       repository: repository.data,
       issues: issues.data,
       loading: false,
+      page,
+      state: 'all',
     });
   };
 
@@ -93,6 +105,8 @@ export default class Repository extends Component {
       repository: repository.data,
       issues: issues.data,
       loading: false,
+      page,
+      state: 'open',
     });
   };
 
@@ -118,27 +132,71 @@ export default class Repository extends Component {
       repository: repository.data,
       issues: issues.data,
       loading: false,
+      page,
+      state: 'closed',
     });
   };
 
   next = async e => {
     e.preventDefault();
-    const { page } = this.state;
-    await this.setState({
-      page: page + 1,
+
+    const { match } = this.props;
+    const { state } = this.state;
+    let { page } = this.state;
+
+    const repoName = decodeURIComponent(match.params.repository);
+
+    page += 1;
+
+    const [repository, issues] = await Promise.all([
+      api.get(`/repos/${repoName}`),
+      api.get(`/repos/${repoName}/issues`, {
+        params: {
+          page,
+          state,
+        },
+      }),
+    ]);
+
+    this.setState({
+      repository: repository.data,
+      issues: issues.data,
+      loading: false,
+      page,
+      state,
     });
-    console.log(this.state.page);
   };
 
   previous = async e => {
     e.preventDefault();
-    const { page } = this.state;
+
+    const { match } = this.props;
+    const { state } = this.state;
+    let { page } = this.state;
+
+    const repoName = decodeURIComponent(match.params.repository);
+
     if (page !== 1) {
-      await this.setState({
-        page: page - 1,
-      });
+      page -= 1;
     }
-    console.log(this.state.page);
+
+    const [repository, issues] = await Promise.all([
+      api.get(`/repos/${repoName}`),
+      api.get(`/repos/${repoName}/issues`, {
+        params: {
+          page,
+          state,
+        },
+      }),
+    ]);
+
+    this.setState({
+      repository: repository.data,
+      issues: issues.data,
+      loading: false,
+      page,
+      state,
+    });
   };
 
   render() {
@@ -177,8 +235,12 @@ export default class Repository extends Component {
             </li>
           ))}
           <Pagination>
-            <button onClick={this.previous}>Previous</button>
-            <button onClick={this.next}>Next</button>
+            <button type="button" onClick={this.previous}>
+              Previous
+            </button>
+            <button type="button" onClick={this.next}>
+              Next
+            </button>
           </Pagination>
         </IssuesList>
       </Container>

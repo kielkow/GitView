@@ -81,3 +81,14 @@ export const List = styled.ul`
     }
   }
 `;
+
+export const Clear = styled.button`
+  background: #7159c1;
+  color: #eee;
+  font-style: bold;
+  font-size: 14px;
+  float: center;
+  padding: 10px 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+`;
