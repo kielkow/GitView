@@ -42,7 +42,10 @@ export const Owner = styled.header`
   }
 `;
 
-export const Filter = styled.button`
+export const Filter = styled.button.attrs(props => ({
+  type: 'button',
+  disabled: props.loadingFilter,
+}))`
   background: #7159c1;
   color: #eee;
   border: 0;
@@ -52,6 +55,11 @@ export const Filter = styled.button`
   font-style: bold;
   & + button {
     margin-left: 10px;
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 `;
 
@@ -119,19 +127,50 @@ export const Pagination = styled.div`
   margin-top: 15px;
   display: flex;
   align-items: center;
+`;
 
-  button {
-    background: #7159c1;
-    color: #eee;
-    font-style: bold;
-    & + button {
-      margin-left: 10px;
-    }
-    font-size: 17px;
-    float: center;
-    display: flex;
-    padding: 10px 15px;
-    border: 1px solid #eee;
-    border-radius: 4px;
+export const Previous = styled.button.attrs(props => ({
+  type: 'button',
+  disabled: props.page === 1 || props.loadingNext,
+}))`
+  background: #7159c1;
+  color: #eee;
+  font-style: bold;
+  & + button {
+    margin-left: 10px;
+  }
+  font-size: 17px;
+  float: center;
+  display: flex;
+  padding: 10px 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+`;
+
+export const Next = styled.button.attrs(props => ({
+  type: 'button',
+  disabled: props.loadingNext,
+}))`
+  background: #7159c1;
+  color: #eee;
+  font-style: bold;
+  & + button {
+    margin-left: 10px;
+  }
+  font-size: 17px;
+  float: center;
+  display: flex;
+  padding: 10px 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 `;

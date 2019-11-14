@@ -4,7 +4,15 @@ import PropTypes from 'prop-types';
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Loading, Owner, IssuesList, Filter, Pagination } from './styles';
+import {
+  Loading,
+  Owner,
+  IssuesList,
+  Filter,
+  Pagination,
+  Previous,
+  Next,
+} from './styles';
 
 export default class Repository extends Component {
   static propTypes = {
@@ -19,6 +27,8 @@ export default class Repository extends Component {
     repository: {},
     issues: [],
     loading: true,
+    loadingNext: false,
+    loadingFilter: false,
     page: 1,
     state: 'open',
   };
@@ -59,6 +69,8 @@ export default class Repository extends Component {
   filterAll = async e => {
     e.preventDefault();
 
+    this.setState({ loadingFilter: true });
+
     const { match } = this.props;
     const { page } = this.state;
 
@@ -78,6 +90,7 @@ export default class Repository extends Component {
       repository: repository.data,
       issues: issues.data,
       loading: false,
+      loadingFilter: false,
       page,
       state: 'all',
     });
@@ -85,6 +98,8 @@ export default class Repository extends Component {
 
   filterOpen = async e => {
     e.preventDefault();
+
+    this.setState({ loadingFilter: true });
 
     const { match } = this.props;
     const { page } = this.state;
@@ -105,6 +120,7 @@ export default class Repository extends Component {
       repository: repository.data,
       issues: issues.data,
       loading: false,
+      loadingFilter: false,
       page,
       state: 'open',
     });
@@ -112,6 +128,8 @@ export default class Repository extends Component {
 
   filterClosed = async e => {
     e.preventDefault();
+
+    this.setState({ loadingFilter: true });
 
     const { match } = this.props;
     const { page } = this.state;
@@ -132,6 +150,7 @@ export default class Repository extends Component {
       repository: repository.data,
       issues: issues.data,
       loading: false,
+      loadingFilter: false,
       page,
       state: 'closed',
     });
@@ -139,6 +158,8 @@ export default class Repository extends Component {
 
   next = async e => {
     e.preventDefault();
+
+    this.setState({ loadingNext: true });
 
     const { match } = this.props;
     const { state } = this.state;
@@ -162,6 +183,7 @@ export default class Repository extends Component {
       repository: repository.data,
       issues: issues.data,
       loading: false,
+      loadingNext: false,
       page,
       state,
     });
@@ -169,6 +191,8 @@ export default class Repository extends Component {
 
   previous = async e => {
     e.preventDefault();
+
+    this.setState({ loadingNext: true });
 
     const { match } = this.props;
     const { state } = this.state;
@@ -194,13 +218,21 @@ export default class Repository extends Component {
       repository: repository.data,
       issues: issues.data,
       loading: false,
+      loadingNext: false,
       page,
       state,
     });
   };
 
   render() {
-    const { repository, issues, loading } = this.state;
+    const {
+      repository,
+      issues,
+      loading,
+      loadingNext,
+      loadingFilter,
+      page,
+    } = this.state;
 
     if (loading) {
       return <Loading>Carregando...</Loading>;
@@ -215,9 +247,15 @@ export default class Repository extends Component {
           <p>{repository.description}</p>
         </Owner>
 
-        <Filter onClick={this.filterAll}>All</Filter>
-        <Filter onClick={this.filterOpen}>Open</Filter>
-        <Filter onClick={this.filterClosed}>Closed</Filter>
+        <Filter onClick={this.filterAll} loadingFilter={loadingFilter}>
+          All
+        </Filter>
+        <Filter onClick={this.filterOpen} loadingFilter={loadingFilter}>
+          Open
+        </Filter>
+        <Filter onClick={this.filterClosed} loadingFilter={loadingFilter}>
+          Closed
+        </Filter>
 
         <IssuesList>
           {issues.map(issue => (
@@ -235,12 +273,17 @@ export default class Repository extends Component {
             </li>
           ))}
           <Pagination>
-            <button type="button" onClick={this.previous}>
+            <Previous
+              type="button"
+              onClick={this.previous}
+              page={page}
+              loadingNext={loadingNext}
+            >
               Previous
-            </button>
-            <button type="button" onClick={this.next}>
+            </Previous>
+            <Next type="button" onClick={this.next} loadingNext={loadingNext}>
               Next
-            </button>
+            </Next>
           </Pagination>
         </IssuesList>
       </Container>
